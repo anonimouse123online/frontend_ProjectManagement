@@ -1,50 +1,133 @@
-# Welcome to your Expo app 👋
+Project Management App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Thesis Project – BSIT
 
-## Get started
+📌 Overview
 
-1. Install dependencies
+This Project Management App is developed as part of my Bachelor of Science in Information Technology (BSIT) thesis. The goal of this project is to design and implement a digital project and task management system that improves workflow coordination, task tracking, and on-site reporting, especially for construction and field-based projects.
 
-   ```bash
-   npm install
-   ```
+The application focuses on organizing tasks, monitoring progress, and providing a structured workflow that reflects real-world project operations.
 
-2. Start the app
+🎯 Objectives
 
-   ```bash
-   npx expo start
-   ```
+The main objectives of this project are:
 
-In the output, you'll find options to open the app in a
+To create a centralized platform for managing projects and tasks
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+To provide a clear workflow from planning to validation
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+To reduce manual tracking and paper-based reporting
 
-## Get a fresh project
+To simulate an actual project management process used in real sites
 
-When you're ready, run:
+To design a system that is scalable for future backend integration
 
-```bash
-npm run reset-project
-```
+🛠️ Technologies Used
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+This project is developed using the following technologies:
 
-## Learn more
+React Native (Expo) – for cross-platform mobile development
 
-To learn more about developing your project with Expo, look at the following resources:
+JavaScript / TypeScript – application logic
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Expo Router – navigation and screen management
 
-## Join the community
+Figma – UI/UX design and prototyping
 
-Join our community of developers creating universal apps.
+Local Storage (temporary) – for offline and testing purposes
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+⚠️ Note: The current version uses local data. The system is designed to be connected to a backend (API + database) in future enhancements.
+
+⚙️ System Features
+
+📂 Project creation and overview
+
+📝 Task listing and task details
+
+⏱️ Task status and progress tracking
+
+📅 Scheduling and timeline visibility
+
+👷 Role-based workflow (Admin / Field User concept)
+
+📱 Mobile-friendly and offline-capable design
+
+🔄 Project Workflow
+
+The system follows a structured operational workflow:
+
+Planning & Initialization
+
+Project is created by the Project Manager
+
+Scope, timeline, and tasks are defined
+
+Task Distribution
+
+Tasks are assigned to field users
+
+Each task contains detailed information
+
+Execution
+
+Field users perform assigned tasks
+
+Task status is updated based on progress
+
+Validation & Monitoring
+
+Completed tasks are reviewed
+
+Project progress is monitored in real time
+
+👨‍💻 Development Process (How I Worked on It)
+
+I developed this project by following a step-by-step and iterative approach:
+
+I started by analyzing real project workflows, especially in construction and site management
+
+I designed the system structure and workflow based on actual operational processes
+
+I created UI/UX prototypes using Figma before coding
+
+I implemented the frontend using React Native with Expo
+
+I used modular components to make the system clean and scalable
+
+I focused on clarity, usability, and real-world applicability rather than just technical complexity
+
+The project was continuously improved through testing, revisions, and feedback to ensure it aligns with the thesis objectives.
+
+🚀 Future Enhancements
+
+Planned improvements for future versions include:
+
+Backend integration (Node.js / Firebase / SQL)
+
+Real-time synchronization
+
+User authentication and role management
+
+Cloud storage for reports and images
+
+Analytics and project performance dashboards
+
+🎓 Academic Purpose
+
+This application is developed strictly for academic and research purposes as part of my undergraduate thesis requirement. It demonstrates my skills in:
+
+Mobile application development
+
+System analysis and design
+
+Project workflow modeling
+
+UI/UX design
+
+Software engineering principles
+
+👤 Author
+
+Kurt Paul Perocillo
+Bachelor of Science in Information Technology
+Thesis Project
