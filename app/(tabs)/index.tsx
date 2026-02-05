@@ -1,12 +1,14 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import {
   Dimensions,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 
@@ -40,110 +42,156 @@ const TASKS = [
 
 export default function HomeScreen() {
   const router = useRouter();
+  const [showNotifications, setShowNotifications] = useState(false);
+  const notifications = [
+    { id: 1, text: "Site inspection scheduled for tomorrow." },
+    { id: 2, text: "Foundation Excavation approved." },
+  ];
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <View>
-          <Text style={styles.headerTitle}>My Tasks</Text>
-          <Text style={styles.headerSubtitle}>Site Engineer Field App</Text>
-        </View>
-        <View style={styles.notificationContainer}>
-          <Ionicons name="notifications-outline" size={28} color="white" />
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>2</Text>
+    <TouchableWithoutFeedback onPress={() => setShowNotifications(false)}>
+      <View style={styles.container}>
+        <View style={styles.headerContainer}>
+          <View>
+            <Text style={styles.headerTitle}>My Tasks</Text>
+            <Text style={styles.headerSubtitle}>Site Engineer Field App</Text>
           </View>
-        </View>
-      </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.statsRow}>
-          <View
-            style={[
-              styles.statBox,
-              { borderColor: "#BBD6FB", backgroundColor: "#EBF3FF" },
-            ]}
-          >
-            <Text style={[styles.statNumber, { color: "#0055D4" }]}>3</Text>
-            <Text style={[styles.statLabel, { color: "#0055D4" }]}>Total</Text>
-          </View>
-          <View
-            style={[
-              styles.statBox,
-              { borderColor: "#FFDAB9", backgroundColor: "#FFF4E5" },
-            ]}
-          >
-            <Text style={[styles.statNumber, { color: "#FF6B00" }]}>2</Text>
-            <Text style={[styles.statLabel, { color: "#FF6B00" }]}>Active</Text>
-          </View>
-          <View
-            style={[
-              styles.statBox,
-              { borderColor: "#C6F6D5", backgroundColor: "#F0FFF4" },
-            ]}
-          >
-            <Text style={[styles.statNumber, { color: "#2F855A" }]}>1</Text>
-            <Text style={[styles.statLabel, { color: "#2F855A" }]}>Done</Text>
-          </View>
-        </View>
+          <View style={styles.notifWrapper}>
+            <Pressable
+              onPress={() => setShowNotifications(!showNotifications)}
+              style={styles.notificationContainer}
+            >
+              <Ionicons name="notifications-outline" size={28} color="white" />
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{notifications.length}</Text>
+              </View>
+            </Pressable>
 
-        {TASKS.map((task) => (
-          <Pressable
-            key={task.id}
-            style={({ pressed }) => [
-              styles.taskCard,
-              pressed && { opacity: 0.7, transform: [{ scale: 0.98 }] },
-            ]}
-            onPress={() => router.push("/(tabs)/task-detail")}
-          >
-            <View style={styles.cardHeader}>
-              <Text style={styles.taskTitle}>{task.title}</Text>
-              <View
-                style={[
-                  styles.priorityTag,
-                  { backgroundColor: task.priorityColor },
-                ]}
+            {showNotifications && (
+              <Pressable
+                style={styles.notifCard}
+                onPress={(e) => e.stopPropagation()}
               >
-                <Text style={styles.priorityText}>{task.priority}</Text>
-              </View>
-            </View>
+                <View style={styles.notifHeader}>
+                  <Text style={styles.notifTitle}>Notifications</Text>
+                </View>
+                {notifications.map((n) => (
+                  <View key={n.id} style={styles.notifItem}>
+                    <View style={styles.notifDot} />
+                    <Text style={styles.notifText}>{n.text}</Text>
+                  </View>
+                ))}
+                <TouchableOpacity
+                  onPress={() => setShowNotifications(false)}
+                  style={styles.notifCloseBtn}
+                >
+                  <Text style={styles.notifCloseText}>Close</Text>
+                </TouchableOpacity>
+              </Pressable>
+            )}
+          </View>
+        </View>
 
-            <Text style={styles.description} numberOfLines={2}>
-              {task.description}
-            </Text>
-
-            <View style={styles.infoRow}>
-              <Ionicons name="calendar-outline" size={16} color="#666" />
-              <Text style={styles.infoText}>
-                Due: <Text style={styles.boldText}>{task.due}</Text>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          onScrollBeginDrag={() => setShowNotifications(false)}
+        >
+          <View style={styles.statsRow}>
+            <View
+              style={[
+                styles.statBox,
+                { borderColor: "#BBD6FB", backgroundColor: "#EBF3FF" },
+              ]}
+            >
+              <Text style={[styles.statNumber, { color: "#0055D4" }]}>3</Text>
+              <Text style={[styles.statLabel, { color: "#0055D4" }]}>
+                Total
               </Text>
             </View>
-            <View style={styles.infoRow}>
-              <Ionicons name="flag-outline" size={16} color="#666" />
-              <Text style={styles.infoText}>
-                Phase: <Text style={styles.boldText}>{task.phase}</Text>
+            <View
+              style={[
+                styles.statBox,
+                { borderColor: "#FFDAB9", backgroundColor: "#FFF4E5" },
+              ]}
+            >
+              <Text style={[styles.statNumber, { color: "#FF6B00" }]}>2</Text>
+              <Text style={[styles.statLabel, { color: "#FF6B00" }]}>
+                Active
               </Text>
             </View>
-            <View style={styles.infoRow}>
-              <Ionicons name="document-text-outline" size={16} color="#666" />
-              <Text style={styles.infoText}>
-                {task.docs} attached documents
-              </Text>
+            <View
+              style={[
+                styles.statBox,
+                { borderColor: "#C6F6D5", backgroundColor: "#F0FFF4" },
+              ]}
+            >
+              <Text style={[styles.statNumber, { color: "#2F855A" }]}>1</Text>
+              <Text style={[styles.statLabel, { color: "#2F855A" }]}>Done</Text>
             </View>
+          </View>
 
-            <View style={styles.cardFooter}>
-              <View style={styles.statusTag}>
-                <Text style={styles.statusText}>{task.status}</Text>
+          {TASKS.map((task) => (
+            <Pressable
+              key={task.id}
+              style={({ pressed }) => [
+                styles.taskCard,
+                pressed && { opacity: 0.7, transform: [{ scale: 0.98 }] },
+              ]}
+              onPress={() => {
+                setShowNotifications(false);
+                router.push("/(tabs)/task-detail");
+              }}
+            >
+              <View style={styles.cardHeader}>
+                <Text style={styles.taskTitle}>{task.title}</Text>
+                <View
+                  style={[
+                    styles.priorityTag,
+                    { backgroundColor: task.priorityColor },
+                  ]}
+                >
+                  <Text style={styles.priorityText}>{task.priority}</Text>
+                </View>
               </View>
-              <View style={styles.detailsBtn}>
-                <Text style={styles.detailsText}>View Details</Text>
-                <Ionicons name="chevron-forward" size={18} color="#000" />
+
+              <Text style={styles.description} numberOfLines={2}>
+                {task.description}
+              </Text>
+
+              <View style={styles.infoRow}>
+                <Ionicons name="calendar-outline" size={16} color="#666" />
+                <Text style={styles.infoText}>
+                  Due: <Text style={styles.boldText}>{task.due}</Text>
+                </Text>
               </View>
-            </View>
-          </Pressable>
-        ))}
-      </ScrollView>
-    </View>
+              <View style={styles.infoRow}>
+                <Ionicons name="flag-outline" size={16} color="#666" />
+                <Text style={styles.infoText}>
+                  Phase: <Text style={styles.boldText}>{task.phase}</Text>
+                </Text>
+              </View>
+              <View style={styles.infoRow}>
+                <Ionicons name="document-text-outline" size={16} color="#666" />
+                <Text style={styles.infoText}>
+                  {task.docs} attached documents
+                </Text>
+              </View>
+
+              <View style={styles.cardFooter}>
+                <View style={styles.statusTag}>
+                  <Text style={styles.statusText}>{task.status}</Text>
+                </View>
+                <View style={styles.detailsBtn}>
+                  <Text style={styles.detailsText}>View Details</Text>
+                  <Ionicons name="chevron-forward" size={18} color="#000" />
+                </View>
+              </View>
+            </Pressable>
+          ))}
+        </ScrollView>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -157,22 +205,65 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    zIndex: 10,
   },
   headerTitle: { color: "white", fontSize: 24, fontWeight: "bold" },
   headerSubtitle: { color: "#CCC", fontSize: 14, marginTop: 4 },
-  notificationContainer: { position: "relative" },
+
+  notifWrapper: { position: "relative" },
+  notificationContainer: { position: "relative", padding: 4 },
   badge: {
     position: "absolute",
-    top: -2,
-    right: -2,
+    top: 0,
+    right: 0,
     backgroundColor: "#FF3B30",
     borderRadius: 10,
-    width: 18,
-    height: 18,
+    width: 16,
+    height: 16,
     justifyContent: "center",
     alignItems: "center",
   },
-  badgeText: { color: "white", fontSize: 10, fontWeight: "bold" },
+  badgeText: { color: "white", fontSize: 9, fontWeight: "bold" },
+  notifCard: {
+    position: "absolute",
+    top: 40,
+    right: 0,
+    width: 240,
+    backgroundColor: "white",
+    borderRadius: 12,
+    padding: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.2,
+    shadowRadius: 20,
+    elevation: 10,
+    borderWidth: 1,
+    borderColor: "#EEE",
+  },
+  notifHeader: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0",
+    paddingBottom: 8,
+    marginBottom: 10,
+  },
+  notifTitle: { fontSize: 14, fontWeight: "bold", color: "#333" },
+  notifItem: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginBottom: 10,
+  },
+  notifDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "#007AFF",
+    marginTop: 5,
+    marginRight: 8,
+  },
+  notifText: { fontSize: 12, color: "#555", flex: 1, lineHeight: 16 },
+  notifCloseBtn: { marginTop: 5, alignSelf: "center" },
+  notifCloseText: { color: "#007AFF", fontSize: 12, fontWeight: "600" },
+
   scrollContent: { padding: 15 },
   statsRow: {
     flexDirection: "row",

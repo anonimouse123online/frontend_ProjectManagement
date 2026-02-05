@@ -17,9 +17,12 @@ export default function DocumentViewer() {
     <SafeAreaView style={styles.container}>
       {/* Header Section */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+        <TouchableOpacity
+          style={styles.backBtn}
+          onPress={() => router.push("/(tabs)/task-detail")}
+        >
           <Ionicons name="arrow-back" size={20} color="white" />
-          <Text style={styles.backText}>Back</Text>
+          <Text style={styles.backText}>Back to Tasks</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>
           Structural Plans - Foundation Level

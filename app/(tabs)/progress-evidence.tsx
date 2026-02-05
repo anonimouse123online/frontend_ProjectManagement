@@ -1,7 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import {
+    ActivityIndicator,
+    Alert,
+    Image,
     SafeAreaView,
     ScrollView,
     StyleSheet,
@@ -13,6 +17,54 @@ import {
 
 export default function ProgressEvidenceScreen() {
   const router = useRouter();
+  const [media, setMedia] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // --- MEDIA LOGIC ---
+
+  const takePhoto = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert(
+        "Permission Needed",
+        "Allow camera access to capture progress photos.",
+      );
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ["images"], // Updated to use array format
+      allowsEditing: true,
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      setMedia(result.assets[0].uri);
+    }
+  };
+
+  const pickFromGallery = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"], // Restricted to images only
+      allowsEditing: true,
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      setMedia(result.assets[0].uri);
+    }
+  };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    // Simulate API Call
+    setTimeout(() => {
+      setIsSubmitting(false);
+      Alert.alert("Success", "Evidence submitted successfully!", [
+        { text: "OK", onPress: () => router.back() },
+      ]);
+    }, 2000);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -20,7 +72,7 @@ export default function ProgressEvidenceScreen() {
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backBtn}
-          onPress={() => router.push("/(tabs)/task-detail")}
+          onPress={() => router.back()}
           hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
         >
           <Ionicons name="arrow-back" size={20} color="white" />
@@ -28,12 +80,11 @@ export default function ProgressEvidenceScreen() {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Progress Evidence</Text>
         <Text style={styles.headerSubtitle}>
-          Capture photos/videos of work completed
+          Capture photos of work completed
         </Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-        {/* Task Context Card */}
         <View style={styles.contextCard}>
           <Text style={styles.contextLabel}>Documenting progress for:</Text>
           <Text style={styles.contextTitle}>
@@ -41,81 +92,83 @@ export default function ProgressEvidenceScreen() {
           </Text>
         </View>
 
-        {/* Capture Media Section */}
         <View style={styles.sectionCard}>
           <Text style={styles.sectionTitle}>Capture Media</Text>
 
-          <TouchableOpacity style={styles.primaryMediaBtn}>
+          <TouchableOpacity style={styles.primaryMediaBtn} onPress={takePhoto}>
             <Ionicons name="camera" size={22} color="white" />
             <Text style={styles.primaryMediaBtnText}>Take Photo</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.secondaryMediaBtn}>
-            <Ionicons name="videocam-outline" size={22} color="black" />
-            <Text style={styles.secondaryMediaBtnText}>Record Video</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.secondaryMediaBtn}>
+          <TouchableOpacity
+            style={styles.secondaryMediaBtn}
+            onPress={pickFromGallery}
+          >
             <Ionicons name="images-outline" size={22} color="black" />
             <Text style={styles.secondaryMediaBtnText}>
               Upload from Gallery
             </Text>
           </TouchableOpacity>
+
+          {/* Media Preview Area */}
+          {media && (
+            <View style={styles.previewContainer}>
+              <Text style={styles.previewLabel}>Attachment Preview:</Text>
+              <Image source={{ uri: media }} style={styles.previewImage} />
+              <TouchableOpacity
+                onPress={() => setMedia(null)}
+                style={styles.removeBtn}
+              >
+                <Ionicons name="trash-outline" size={16} color="#E53E3E" />
+                <Text style={styles.removeText}>Remove Photo</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
 
-        {/* Progress Notes Section */}
         <View style={styles.sectionCard}>
           <Text style={styles.sectionTitle}>Progress Notes</Text>
           <TextInput
             style={styles.notesInput}
-            placeholder="Describe the work completed, any observations, or additional context..."
+            placeholder="Describe the work completed..."
             multiline
             numberOfLines={4}
             textAlignVertical="top"
           />
-          <Text style={styles.notesHint}>
-            Include details about quality, safety compliance, and any deviations
-            from plan
-          </Text>
         </View>
 
-        {/* Auto-Captured Data Section */}
         <View style={[styles.sectionCard, styles.autoDataCard]}>
           <Text style={[styles.sectionTitle, { color: "#1A365D" }]}>
             Auto-Captured Data
           </Text>
-
           <View style={styles.dataRow}>
             <Ionicons name="location" size={18} color="#E53E3E" />
-            <Text style={styles.dataText}>GPS Location: Will be recorded</Text>
+            <Text style={styles.dataText}>GPS: 10.3157° N, 123.8854° E</Text>
           </View>
-
           <View style={styles.dataRow}>
             <Ionicons name="time" size={18} color="#718096" />
-            <Text style={styles.dataText}>Timestamp: 2/5/2026, 8:48:20 PM</Text>
-          </View>
-
-          <View style={styles.dataRow}>
-            <Ionicons name="person" size={18} color="#553C9A" />
-            <Text style={styles.dataText}>Engineer: Your Name</Text>
+            <Text style={styles.dataText}>2/5/2026, 8:48:20 PM</Text>
           </View>
         </View>
 
-        {/* Submit Button */}
-        <TouchableOpacity style={styles.submitBtn}>
-          <Ionicons name="cloud-upload-outline" size={22} color="white" />
-          <Text style={styles.submitBtnText}>Submit Progress Evidence</Text>
+        <TouchableOpacity
+          style={[
+            styles.submitBtn,
+            (!media || isSubmitting) && { backgroundColor: "#ccc" },
+          ]}
+          disabled={!media || isSubmitting}
+          onPress={handleSubmit}
+        >
+          {isSubmitting ? (
+            <ActivityIndicator color="white" />
+          ) : (
+            <>
+              <Ionicons name="cloud-upload-outline" size={22} color="white" />
+              <Text style={styles.submitBtnText}>Submit Progress Evidence</Text>
+            </>
+          )}
         </TouchableOpacity>
-        <Text style={styles.footerHint}>
-          Capture at least one photo/video or add notes to submit
-        </Text>
       </ScrollView>
-
-      {/* Floating Web Button */}
-      <TouchableOpacity style={styles.switchWebBtn}>
-        <Ionicons name="desktop-outline" size={18} color="white" />
-        <Text style={styles.switchWebText}>Switch to Web</Text>
-      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -184,6 +237,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 10,
   },
+  previewContainer: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: "#f9f9f9",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  previewLabel: { fontSize: 12, color: "#666", marginBottom: 8 },
+  previewImage: {
+    width: "100%",
+    height: 250,
+    borderRadius: 8,
+    backgroundColor: "#000",
+  },
+  removeBtn: { flexDirection: "row", alignItems: "center", marginTop: 10 },
+  removeText: { color: "#E53E3E", marginLeft: 5, fontWeight: "bold" },
   notesInput: {
     backgroundColor: "#F8F9FA",
     borderRadius: 8,
@@ -193,12 +262,11 @@ const styles = StyleSheet.create({
     borderColor: "#E2E8F0",
     fontSize: 15,
   },
-  notesHint: { fontSize: 12, color: "#94A3B8", marginTop: 10, lineHeight: 18 },
   autoDataCard: { backgroundColor: "#EBF8FF", borderColor: "#BEE3F8" },
   dataRow: { flexDirection: "row", alignItems: "center", marginTop: 10 },
   dataText: { marginLeft: 10, color: "#2D3748", fontSize: 14 },
   submitBtn: {
-    backgroundColor: "#82D6A4",
+    backgroundColor: "#27AE60",
     borderRadius: 10,
     padding: 18,
     flexDirection: "row",
@@ -211,28 +279,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
     marginLeft: 10,
-  },
-  footerHint: {
-    textAlign: "center",
-    color: "#718096",
-    fontSize: 12,
-    marginTop: 15,
-  },
-  switchWebBtn: {
-    position: "absolute",
-    bottom: 20,
-    right: 20,
-    backgroundColor: "#050A14",
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 25,
-  },
-  switchWebText: {
-    color: "white",
-    fontWeight: "bold",
-    marginLeft: 8,
-    fontSize: 14,
   },
 });
